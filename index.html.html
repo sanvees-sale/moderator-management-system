@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sanvee's By Tony - Moderator Management</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        /* Scrollbar styling for small lists */
+        .scrollable-list::-webkit-scrollbar { width: 4px; }
+        .scrollable-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-gray-100 p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="bg-red-300 text-center py-4 rounded-t-lg border-2 border-black">
+            <h1 class="text-4xl font-bold text-gray-900 tracking-wider">Sanvee's By Tony</h1>
+            <h2 class="text-xl font-semibold mt-2">Moderator Management Dashboard</h2>
+        </div>
+
+        <!-- Dashboard Widgets -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-6">
+            <!-- Present -->
+            <div class="bg-white border-l-4 border-green-500 rounded-lg shadow p-4">
+                <div class="flex justify-between items-center border-b pb-2 mb-2">
+                    <h3 class="text-lg font-bold text-green-700">Total Present</h3>
+                    <span id="count-present" class="text-2xl font-bold text-gray-800">0</span>
+                </div>
+                <ul id="list-present" class="scrollable-list h-24 overflow-y-auto text-sm text-gray-600 space-y-1"></ul>
+            </div>
+            <!-- Absent -->
+            <div class="bg-white border-l-4 border-red-500 rounded-lg shadow p-4">
+                <div class="flex justify-between items-center border-b pb-2 mb-2">
+                    <h3 class="text-lg font-bold text-red-700">Absent</h3>
+                    <span id="count-absent" class="text-2xl font-bold text-gray-800">0</span>
+                </div>
+                <ul id="list-absent" class="scrollable-list h-24 overflow-y-auto text-sm text-gray-600 space-y-1"></ul>
+            </div>
+            <!-- Night Shift -->
+            <div class="bg-white border-l-4 border-blue-500 rounded-lg shadow p-4">
+                <div class="flex justify-between items-center border-b pb-2 mb-2">
+                    <h3 class="text-lg font-bold text-blue-700">Night Shift</h3>
+                    <span id="count-night" class="text-2xl font-bold text-gray-800">0</span>
+                </div>
+                <ul id="list-night" class="scrollable-list h-24 overflow-y-auto text-sm text-gray-600 space-y-1"></ul>
+            </div>
+            <!-- Outside Work -->
+            <div class="bg-white border-l-4 border-yellow-500 rounded-lg shadow p-4">
+                <div class="flex justify-between items-center border-b pb-2 mb-2">
+                    <h3 class="text-lg font-bold text-yellow-600">Outside Work</h3>
+                    <span id="count-outside" class="text-2xl font-bold text-gray-800">0</span>
+                </div>
+                <ul id="list-outside" class="scrollable-list h-24 overflow-y-auto text-sm text-gray-600 space-y-1"></ul>
+            </div>
+        </div>
+
+        <!-- Main Table -->
+        <div class="bg-white rounded-lg shadow overflow-x-auto border-2 border-black">
+            <table class="w-full text-center border-collapse">
+                <thead>
+                    <tr class="bg-yellow-100 text-gray-800 border-b-2 border-black">
+                        <th class="p-3 border-r-2 border-black font-bold">SL</th>
+                        <th class="p-3 border-r-2 border-black font-bold text-left">Name</th>
+                        <th class="p-3 border-r-2 border-black font-bold">Weekend</th>
+                        <th class="p-3 border-r-2 border-black font-bold">Number</th>
+                        <th class="p-3 border-r-2 border-black font-bold">Joining Date</th>
+                        <th class="p-3 border-r-2 border-black font-bold bg-green-100 text-green-900">Salary (TK)</th>
+                        <th class="p-3 font-bold bg-blue-100 text-blue-900">Today's Status</th>
+                    </tr>
+                </thead>
+                <tbody id="moderator-table-body">
+                    <!-- JavaScript will populate rows here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Use 'let' instead of 'const' so we can update it from Local Storage
+        let moderators = [
+            { sl: 1, name: "Sefat Karim", weekend: "Saturday", color: "bg-green-400", phone: "01781597973", join: "01-01-2026", salary: "", status: "Present" },
+            { sl: 2, name: "Akram", weekend: "Saturday", color: "bg-green-400", phone: "01871976484", join: "08-03-2024", salary: "", status: "Present" },
+            { sl: 3, name: "Arman Alif", weekend: "Saturday", color: "bg-green-400", phone: "01406274628", join: "04-10-2025", salary: "", status: "Present" },
+            { sl: 4, name: "Sajedul Islam", weekend: "Sunday", color: "bg-purple-300", phone: "01876608766", join: "13-12-2023", salary: "", status: "Present" },
+            { sl: 5, name: "Tarikul Islam", weekend: "Sunday", color: "bg-purple-300", phone: "01401248381", join: "03-01-2026", salary: "", status: "Present" },
+            { sl: 6, name: "Tonmoy", weekend: "Sunday", color: "bg-purple-300", phone: "01921080031", join: "02-11-2026", salary: "", status: "Present" },
+            { sl: 7, name: "Omar Faruk Majumder", weekend: "Sunday", color: "bg-purple-300", phone: "01675562296", join: "31-12-2025", salary: "", status: "Present" },
+            { sl: 8, name: "Md Sujon", weekend: "Monday", color: "bg-red-200", phone: "01762946309", join: "12-07-2024", salary: "", status: "Present" },
+            { sl: 9, name: "Mosharof Hossain", weekend: "Monday", color: "bg-red-200", phone: "01927917924", join: "01-01-2026", salary: "", status: "Present" },
+            { sl: 10, name: "Md Raihan", weekend: "Monday", color: "bg-red-200", phone: "01931070660", join: "27-06-2026", salary: "", status: "Present" },
+            { sl: 11, name: "Moinul Islam", weekend: "Tuesday", color: "bg-fuchsia-500", phone: "01602871511", join: "05-01-2026", salary: "", status: "Present" },
+            { sl: 12, name: "Sifat Hossain", weekend: "Tuesday", color: "bg-fuchsia-500", phone: "01984382210", join: "24-06-2026", salary: "", status: "Present" },
+            { sl: 13, name: "Shakib Ahmed", weekend: "Tuesday", color: "bg-fuchsia-500", phone: "01321818169", join: "28-07-2026", salary: "", status: "Present" },
+            { sl: 14, name: "Al Arafat", weekend: "Tuesday", color: "bg-fuchsia-500", phone: "01327948737", join: "05-01-2026", salary: "", status: "Present" },
+            { sl: 15, name: "Kowshiq", weekend: "Wednesday", color: "bg-orange-400", phone: "01956363216", join: "19-01-2024", salary: "", status: "Present" },
+            { sl: 16, name: "Mamun", weekend: "Wednesday", color: "bg-orange-400", phone: "01518707855", join: "09-07-2025", salary: "", status: "Present" },
+            { sl: 17, name: "Sahil (Forever)", weekend: "Wednesday", color: "bg-orange-400", phone: "01947127960", join: "28-06-2026", salary: "", status: "Present" },
+            { sl: 18, name: "Najmul Islam", weekend: "Thursday", color: "bg-cyan-500", phone: "01782417078", join: "17-05-2023", salary: "", status: "Present" },
+            { sl: 19, name: "Mehadi Hasan", weekend: "Thursday", color: "bg-cyan-500", phone: "01646406186", join: "22-10-2022", salary: "", status: "Present" },
+            { sl: 20, name: "Naim Khan", weekend: "Thursday", color: "bg-cyan-500", phone: "01615354665", join: "09-01-2025", salary: "", status: "Present" },
+            { sl: 21, name: "Rezaul Karim", weekend: "Thursday", color: "bg-cyan-500", phone: "01407722355", join: "01-12-2024", salary: "", status: "Present" },
+            { sl: 22, name: "Sami", weekend: "Friday", color: "bg-yellow-300", phone: "01407914895", join: "02-10-2024", salary: "", status: "Present" },
+            { sl: 23, name: "Sahil Sheikh", weekend: "Friday", color: "bg-yellow-300", phone: "01626429771", join: "05-01-2026", salary: "", status: "Present" },
+            { sl: 24, name: "Piyal Sarker", weekend: "Friday", color: "bg-yellow-300", phone: "01705952384", join: "04-01-2026", salary: "", status: "Present" },
+            { sl: 25, name: "Abu Torab", weekend: "Friday", color: "bg-yellow-300", phone: "01722639097", join: "28-06-2026", salary: "", status: "Present" }
+        ];
+
+        // Function to save data to local storage
+        function saveToLocalStorage() {
+            localStorage.setItem('sanveesModeratorsData', JSON.stringify(moderators));
+        }
+
+        // Function to load data from local storage on startup
+        function loadFromLocalStorage() {
+            const savedData = localStorage.getItem('sanveesModeratorsData');
+            if (savedData) {
+                moderators = JSON.parse(savedData);
+            }
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById("moderator-table-body");
+            tbody.innerHTML = ""; 
+
+            moderators.forEach((mod, index) => {
+                const tr = document.createElement("tr");
+                tr.className = "border-b border-black font-semibold bg-white hover:bg-gray-50 transition";
+                
+                tr.innerHTML = `
+                    <td class="p-2 border-r border-black">${mod.sl}</td>
+                    <td class="p-2 border-r border-black text-left">${mod.name}</td>
+                    <td class="p-2 border-r border-black ${mod.color} border-y border-black m-1 rounded shadow-sm text-black inline-block w-11/12 mt-1 mb-1">${mod.weekend}</td>
+                    <td class="p-2 border-r border-l border-black font-mono">${mod.phone}</td>
+                    <td class="p-2 border-r border-black font-mono">${mod.join}</td>
+                    <td class="p-2 border-r border-black">
+                        <input type="number" 
+                               value="${mod.salary}" 
+                               onchange="updateSalary(${index}, this.value)" 
+                               placeholder="Enter Salary" 
+                               class="w-full p-1 border rounded focus:ring-2 focus:ring-green-400 outline-none text-center font-mono">
+                    </td>
+                    <td class="p-2">
+                        <select onchange="updateStatus(${index}, this.value)" 
+                                class="w-full p-1 border rounded font-bold outline-none cursor-pointer
+                                ${mod.status === 'Present' ? 'bg-green-100 text-green-700' : ''}
+                                ${mod.status === 'Absent' ? 'bg-red-100 text-red-700' : ''}
+                                ${mod.status === 'Night Shift' ? 'bg-blue-100 text-blue-700' : ''}
+                                ${mod.status === 'Outside Work' ? 'bg-yellow-100 text-yellow-700' : ''}
+                                ">
+                            <option value="Present" ${mod.status === 'Present' ? 'selected' : ''}>Present</option>
+                            <option value="Absent" ${mod.status === 'Absent' ? 'selected' : ''}>Absent</option>
+                            <option value="Night Shift" ${mod.status === 'Night Shift' ? 'selected' : ''}>Night Shift</option>
+                            <option value="Outside Work" ${mod.status === 'Outside Work' ? 'selected' : ''}>Outside Work</option>
+                        </select>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            updateDashboard();
+        }
+
+        function updateStatus(index, newStatus) {
+            moderators[index].status = newStatus;
+            saveToLocalStorage(); // Save changes
+            renderTable(); // Re-render to update colors and dashboard
+        }
+
+        function updateSalary(index, newSalary) {
+            moderators[index].salary = newSalary;
+            saveToLocalStorage(); // Save changes
+        }
+
+        function updateDashboard() {
+            const categories = {
+                'Present': [],
+                'Absent': [],
+                'Night Shift': [],
+                'Outside Work': []
+            };
+
+            // Categorize moderators based on current status
+            moderators.forEach(mod => {
+                if (categories[mod.status]) {
+                    categories[mod.status].push(mod.name);
+                }
+            });
+
+            // Update Counts & Lists in DOM
+            const updateWidget = (idPrefix, categoryName) => {
+                document.getElementById(`count-${idPrefix}`).innerText = categories[categoryName].length;
+                const listEl = document.getElementById(`list-${idPrefix}`);
+                listEl.innerHTML = "";
+                categories[categoryName].forEach(name => {
+                    const li = document.createElement("li");
+                    li.innerText = "• " + name;
+                    listEl.appendChild(li);
+                });
+            }
+
+            updateWidget('present', 'Present');
+            updateWidget('absent', 'Absent');
+            updateWidget('night', 'Night Shift');
+            updateWidget('outside', 'Outside Work');
+        }
+
+        // Initialize App
+        window.onload = function() {
+            loadFromLocalStorage(); // Load saved data first
+            renderTable();          // Then render the table
+        };
+    </script>
+</body>
+</html>
