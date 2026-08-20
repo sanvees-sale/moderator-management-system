@@ -618,7 +618,7 @@
                                 <th class="py-4 px-5">Name & Duty Info</th>
                                 <th class="py-4 px-5 text-center">Weekly Off</th>
                                 <th class="py-4 px-5">Contact / WhatsApp</th>
-                                <th class="py-4 px-5 text-center">Joining Date</th>
+                                <th class="py-4 px-5 text-center">Joining Date & Service</th>
                                 <th class="py-4 px-5 text-center w-64">Attendance Status</th>
                                 <th class="py-4 px-5 text-center w-24 no-print">Actions</th>
                             </tr>
@@ -692,6 +692,11 @@
                                 <span><i class="fa-solid fa-phone text-slate-400 mr-1.5"></i> <b id="single-mod-phone" class="font-mono text-slate-800 dark:text-slate-200 text-sm sm:text-base">01781597973</b></span>
                                 <span>•</span>
                                 <span><i class="fa-solid fa-calendar-plus text-slate-400 mr-1.5"></i> Joined: <b id="single-mod-join" class="font-mono text-slate-800 dark:text-slate-200 text-sm sm:text-base">01-01-2026</b></span>
+                                <span>•</span>
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 font-extrabold text-xs border border-indigo-200/80 dark:border-indigo-800/80">
+                                    <i class="fa-solid fa-business-time text-indigo-500"></i>
+                                    <span>Service: <b id="single-mod-tenure" class="font-mono">--</b></span>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -1131,7 +1136,11 @@
                     </div>
                     <div>
                         <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5 text-xs">Joining Date</label>
-                        <input type="text" id="form-join" required placeholder="01-01-2026" class="w-full px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none font-mono font-bold">
+                        <input type="text" id="form-join" oninput="updateFormTenurePreview()" required placeholder="01-01-2026" class="w-full px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none font-mono font-bold">
+                        <div class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 mt-1 flex items-center gap-1">
+                            <i class="fa-solid fa-business-time text-[10px]"></i>
+                            <span id="form-tenure-text">Service: --</span>
+                        </div>
                     </div>
                 </div>
 
@@ -1307,6 +1316,75 @@
                 curr.setDate(curr.getDate() + 1);
             }
             return dates;
+        }
+
+        // Helper: Calculate Exact Service Tenure (Years, Months, Days) from Joining Date
+        function calculateTenure(joinDateStr, asOfDateStr = null) {
+            if (!joinDateStr || typeof joinDateStr !== 'string') return "";
+            let jD, jM, jY;
+            if (joinDateStr.includes('-')) {
+                const parts = joinDateStr.split('-');
+                if (parts[0].length === 4) {
+                    jY = parseInt(parts[0], 10);
+                    jM = parseInt(parts[1], 10);
+                    jD = parseInt(parts[2], 10);
+                } else {
+                    jD = parseInt(parts[0], 10);
+                    jM = parseInt(parts[1], 10);
+                    jY = parseInt(parts[2], 10);
+                }
+            } else {
+                return "";
+            }
+
+            const startDate = new Date(jY, jM - 1, jD);
+            let endDate;
+            if (asOfDateStr) {
+                const [eY, eM, eD] = asOfDateStr.split('-').map(Number);
+                endDate = new Date(eY, eM - 1, eD);
+            } else {
+                endDate = new Date();
+            }
+
+            if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) return "";
+
+            if (startDate > endDate) {
+                return "Just Joined";
+            }
+
+            let years = endDate.getFullYear() - startDate.getFullYear();
+            let months = endDate.getMonth() - startDate.getMonth();
+            let days = endDate.getDate() - startDate.getDate();
+
+            if (days < 0) {
+                months--;
+                const prevMonth = new Date(endDate.getFullYear(), endDate.getMonth(), 0);
+                days += prevMonth.getDate();
+            }
+
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+
+            const parts = [];
+            if (years > 0) parts.push(`${years} ${years === 1 ? 'Year' : 'Years'}`);
+            if (months > 0) parts.push(`${months} ${months === 1 ? 'Month' : 'Months'}`);
+            if (days > 0 && years === 0) parts.push(`${days} ${days === 1 ? 'Day' : 'Days'}`);
+
+            if (parts.length === 0) {
+                return `${days} Days`;
+            }
+
+            return parts.join(' ');
+        }
+
+        function updateFormTenurePreview() {
+            const input = document.getElementById('form-join');
+            const textEl = document.getElementById('form-tenure-text');
+            if (!input || !textEl) return;
+            const tenure = calculateTenure(input.value.trim(), currentActiveDate);
+            textEl.innerText = tenure ? `Service: ${tenure}` : 'Service: --';
         }
 
         // Storage Management (v8 storage with Night Shift & Approved Leave records)
@@ -1657,9 +1735,15 @@
                         </div>
                     </td>
 
-                    <!-- Joining Date -->
-                    <td class="py-4 px-5 text-center font-mono text-slate-700 dark:text-slate-300 font-bold text-sm sm:text-base">
-                        ${mod.join}
+                    <!-- Joining Date & Service Tenure -->
+                    <td class="py-4 px-5 text-center">
+                        <div class="font-mono text-slate-800 dark:text-slate-200 font-bold text-sm sm:text-base">
+                            ${mod.join}
+                        </div>
+                        <div class="inline-flex items-center gap-1.5 text-[11px] font-extrabold text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/60 px-2.5 py-0.5 rounded-lg border border-indigo-200/80 dark:border-indigo-800/80 mt-1 shadow-2xs" title="Total Service Tenure">
+                            <i class="fa-solid fa-business-time text-[10px] text-indigo-500"></i>
+                            <span>${calculateTenure(mod.join, currentActiveDate)}</span>
+                        </div>
                     </td>
 
                     <!-- Attendance Selector for Selected Date -->
@@ -2324,6 +2408,9 @@
                     const joinEl = document.getElementById('single-mod-join');
                     if (joinEl) joinEl.innerText = mod.join;
 
+                    const tenureEl = document.getElementById('single-mod-tenure');
+                    if (tenureEl) tenureEl.innerText = calculateTenure(mod.join, currentActiveDate);
+
                     const waBtn = document.getElementById('single-mod-wa-btn');
                     if (waBtn) waBtn.onclick = () => triggerDirectWhatsApp(mod.phone, mod.name);
 
@@ -2470,6 +2557,7 @@
             const todayStr = `${String(now.getDate()).padStart(2, '0')}-${String(now.getMonth() + 1).padStart(2, '0')}-${now.getFullYear()}`;
             document.getElementById('form-join').value = todayStr;
             document.getElementById('form-status').value = "Present";
+            updateFormTenurePreview();
 
             document.getElementById('moderator-modal').classList.remove('hidden');
         }
@@ -2485,6 +2573,7 @@
             document.getElementById('form-phone').value = mod.phone;
             document.getElementById('form-join').value = mod.join;
             document.getElementById('form-status').value = getModeratorStatusForDate(mod, currentActiveDate);
+            updateFormTenurePreview();
 
             document.getElementById('moderator-modal').classList.remove('hidden');
         }
@@ -2536,10 +2625,11 @@
         // Export to CSV
         function exportCurrentViewCSV() {
             if (activeView === 'daily') {
-                let csv = `data:text/csv;charset=utf-8,SL,Name,Weekly Off,Phone,Joining Date,Attendance Status (${currentActiveDate})\n`;
+                let csv = `data:text/csv;charset=utf-8,SL,Name,Weekly Off,Phone,Joining Date,Service Duration,Attendance Status (${currentActiveDate})\n`;
                 moderators.forEach(m => {
                     const status = getModeratorStatusForDate(m, currentActiveDate);
-                    csv += `${m.sl},"${m.name}","${m.weekend}","${m.phone}","${m.join}","${status}"\n`;
+                    const tenure = calculateTenure(m.join, currentActiveDate);
+                    csv += `${m.sl},"${m.name}","${m.weekend}","${m.phone}","${m.join}","${tenure}","${status}"\n`;
                 });
                 downloadCSV(csv, `Sanvees_Roster_${currentActiveDate}.csv`);
             } else {
