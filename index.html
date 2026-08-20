@@ -59,6 +59,79 @@
             font-size: 0.75rem;
         }
 
+        /* Luxury Animations & Micro-Interactions */
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-24px) scale(1.08); }
+        }
+        @keyframes floatReverse {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(24px) scale(0.95); }
+        }
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.45; transform: scale(1); }
+            50% { opacity: 0.85; transform: scale(1.06); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+        @keyframes fadeInScale {
+            0% { opacity: 0; transform: scale(0.95) translateY(12px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @keyframes shimmerSweep {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(200%); }
+        }
+
+        .animate-float-slow {
+            animation: floatSlow 9s ease-in-out infinite;
+        }
+        .animate-float-reverse {
+            animation: floatReverse 11s ease-in-out infinite;
+        }
+        .animate-pulse-glow {
+            animation: pulseGlow 4s ease-in-out infinite;
+        }
+        .animate-shake {
+            animation: shake 0.45s ease-in-out;
+        }
+        .animate-fade-scale {
+            animation: fadeInScale 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        
+        .shimmer-btn {
+            position: relative;
+            overflow: hidden;
+        }
+        .shimmer-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transform: translateX(-100%);
+        }
+        .shimmer-btn:hover::after {
+            animation: shimmerSweep 1.2s infinite;
+        }
+
+        /* Ambient Card Hover Glow & Scale */
+        .interactive-card {
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .interactive-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px -6px rgba(225, 29, 72, 0.12), 0 8px 16px -4px rgba(0, 0, 0, 0.06);
+        }
+        .dark .interactive-card:hover {
+            box-shadow: 0 12px 28px -6px rgba(225, 29, 72, 0.25), 0 8px 16px -4px rgba(0, 0, 0, 0.4);
+        }
+
         /* Clean Print Stylesheet with Landscape Support */
         @media print {
             @page { 
@@ -159,28 +232,120 @@
     </style>
 </head>
 
-<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-200 antialiased font-sans flex flex-col w-full">
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-200 antialiased font-sans flex flex-col w-full relative overflow-x-hidden">
 
     <!-- Toast Alerts Container -->
     <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-    <!-- Print Only Header -->
-    <div class="print-only p-6 border-b-2 border-slate-800 mb-4">
-        <div class="flex justify-between items-center">
-            <div>
-                <h1 class="text-2xl font-black tracking-tight text-black">Sanvee's by Tony</h1>
-                <h2 id="print-sheet-title" class="text-sm font-bold text-slate-700">Moderators Data</h2>
-                <div class="text-xs font-semibold text-slate-600 mt-1">Moderator Attendance & Duty Roster</div>
+    <!-- ======================= AUTHENTICATION / LOGIN PORTAL ======================= -->
+    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/95 backdrop-blur-2xl p-4 overflow-hidden select-none">
+        
+        <!-- Animated Ambient Glowing Mesh & Orbs -->
+        <div class="absolute -top-32 -left-32 w-96 h-96 bg-rose-600/25 rounded-full blur-3xl pointer-events-none animate-float-slow"></div>
+        <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-pink-600/20 rounded-full blur-3xl pointer-events-none animate-float-reverse"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-indigo-600/15 rounded-full blur-3xl pointer-events-none animate-pulse-glow"></div>
+
+        <!-- Login Card -->
+        <div id="login-card" class="relative w-full max-w-md rounded-3xl bg-white/95 dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800 shadow-2xl backdrop-blur-2xl p-7 sm:p-9 animate-fade-scale overflow-hidden">
+            
+            <!-- Gradient Top Aura -->
+            <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-rose-500 via-pink-500 to-indigo-500"></div>
+
+            <!-- Brand Header -->
+            <div class="text-center space-y-2 mb-7">
+                <div class="w-16 h-16 rounded-3xl bg-gradient-to-tr from-rose-600 via-rose-500 to-pink-500 text-white flex items-center justify-center text-2xl mx-auto shadow-lg shadow-rose-600/30 ring-4 ring-rose-500/10">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight pt-1">
+                    Sanvee's by Tony
+                </h2>
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-rose-50 text-rose-700 dark:bg-rose-950/80 dark:text-rose-300 border border-rose-200 dark:border-rose-800/80">
+                    <i class="fa-solid fa-lock text-[10px]"></i> Privacy Protected System
+                </div>
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-bold">
+                    Enter admin credentials to unlock moderators dashboard
+                </p>
             </div>
-            <div class="text-right text-xs font-mono">
-                <div>Selected Date: <span id="print-date-str"></span></div>
-                <div>Generated: <span id="print-time-str"></span></div>
+
+            <!-- Error Banner -->
+            <div id="login-error-banner" class="hidden mb-4 p-3 rounded-2xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs font-bold flex items-center gap-2.5">
+                <i class="fa-solid fa-circle-exclamation text-base flex-shrink-0"></i>
+                <span id="login-error-text">Invalid username or password.</span>
+            </div>
+
+            <!-- Login Form -->
+            <form onsubmit="handleLoginSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-black uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">Username</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-user absolute left-4 top-3.5 text-slate-400 text-sm"></i>
+                        <input type="text" 
+                               id="login-username" 
+                               required 
+                               autocomplete="username" 
+                               placeholder="admin" 
+                               class="w-full pl-11 pr-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white font-semibold text-sm outline-none focus:ring-2 focus:ring-rose-500 transition">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-black uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">Password</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-key absolute left-4 top-3.5 text-slate-400 text-sm"></i>
+                        <input type="password" 
+                               id="login-password" 
+                               required 
+                               autocomplete="current-password" 
+                               placeholder="••••••••" 
+                               class="w-full pl-11 pr-11 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white font-mono font-bold text-sm outline-none focus:ring-2 focus:ring-rose-500 transition">
+                        <button type="button" onclick="togglePasswordVisibility()" title="Toggle password visibility" class="absolute right-3.5 top-3.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5">
+                            <i id="password-toggle-icon" class="fa-solid fa-eye text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between pt-1">
+                    <label class="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-600 dark:text-slate-400 select-none">
+                        <input type="checkbox" id="login-remember-me" checked class="w-4 h-4 rounded text-rose-600 focus:ring-rose-500 border-slate-300 dark:border-slate-700">
+                        <span>Remember this session</span>
+                    </label>
+                </div>
+
+                <button type="submit" id="btn-login-submit" 
+                        class="shimmer-btn w-full mt-2 py-3.5 rounded-2xl bg-gradient-to-r from-rose-600 via-rose-500 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white font-black text-sm tracking-wide shadow-lg shadow-rose-600/25 active:scale-[0.98] transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-right-to-bracket text-base"></i>
+                    <span>Unlock Dashboard</span>
+                </button>
+            </form>
+
+            <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800/80 text-center">
+                <span class="text-[11px] font-semibold text-slate-400">
+                    Sanvee's by Tony • Moderators Privacy Shield
+                </span>
             </div>
         </div>
     </div>
 
-    <!-- Top Clean Header Bar -->
-    <header class="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm no-print w-full">
+    <!-- ======================= MAIN DASHBOARD APPLICATION WRAPPER ======================= -->
+    <div id="main-app-wrapper" class="flex flex-col min-h-screen w-full transition-opacity duration-300">
+
+        <!-- Print Only Header -->
+        <div class="print-only p-6 border-b-2 border-slate-800 mb-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-black tracking-tight text-black">Sanvee's by Tony</h1>
+                    <h2 id="print-sheet-title" class="text-sm font-bold text-slate-700">Moderators Data</h2>
+                    <div class="text-xs font-semibold text-slate-600 mt-1">Moderator Attendance & Duty Roster</div>
+                </div>
+                <div class="text-right text-xs font-mono">
+                    <div>Selected Date: <span id="print-date-str"></span></div>
+                    <div>Generated: <span id="print-time-str"></span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Clean Header Bar -->
+        <header class="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm no-print w-full">
         <div class="w-full px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-3">
             
             <!-- Brand Logo & Clean Header Name -->
@@ -252,6 +417,20 @@
                         class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition text-sm">
                     <i id="theme-icon" class="fa-solid fa-moon"></i>
                 </button>
+
+                <!-- Change Password / Security Settings -->
+                <button onclick="openChangePasswordModal()" title="Change Admin Password" 
+                        class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-xs sm:text-sm font-bold transition shadow-xs">
+                    <i class="fa-solid fa-key text-amber-500"></i>
+                    <span class="hidden xl:inline">Password</span>
+                </button>
+
+                <!-- Logout Button -->
+                <button onclick="handleLogout()" title="Logout from System" 
+                        class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border border-rose-200 dark:border-rose-800/80 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-xs sm:text-sm font-black transition shadow-2xs">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span class="hidden md:inline">Logout</span>
+                </button>
             </div>
         </div>
     </header>
@@ -260,10 +439,10 @@
     <main class="w-full px-4 sm:px-6 lg:px-8 py-4 flex-1 space-y-4 print-container">
 
         <!-- ======================= 1. DAILY ROSTER VIEW ======================= -->
-        <div id="view-daily-container" class="space-y-4">
+        <div id="view-daily-container" class="space-y-4 animate-fade-scale">
             
             <!-- Date Navigator Banner -->
-            <section class="bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs flex flex-wrap items-center justify-between gap-3 no-print">
+            <section class="interactive-card bg-white dark:bg-slate-900 p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs flex flex-wrap items-center justify-between gap-3 no-print">
                 <div class="flex items-center gap-3">
                     <span class="text-xs sm:text-sm font-extrabold uppercase text-slate-400 tracking-wider">Attendance Date:</span>
                     <div class="flex items-center gap-1.5">
@@ -292,7 +471,7 @@
                 
                 <!-- Present Card -->
                 <div onclick="filterByStatus('Present')" 
-                     class="group bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs hover:border-emerald-500/50 hover:shadow-md transition cursor-pointer">
+                     class="interactive-card group bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs hover:border-emerald-500/50 hover:shadow-md transition cursor-pointer">
                     <div class="flex items-center justify-between">
                         <div>
                             <span class="text-xs sm:text-sm font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Present</span>
@@ -301,7 +480,7 @@
                                 <span id="pct-present" class="text-xs sm:text-sm font-extrabold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-md">0%</span>
                             </div>
                         </div>
-                        <div class="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 flex items-center justify-center text-xl sm:text-2xl">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 flex items-center justify-center text-xl sm:text-2xl group-hover:scale-110 transition-transform">
                             <i class="fa-solid fa-user-check"></i>
                         </div>
                     </div>
@@ -309,7 +488,7 @@
 
                 <!-- Weekly Off Today Card (Automatic on Weekend Day) -->
                 <div onclick="filterByStatus('Weekly Off')" 
-                     class="group bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs hover:border-amber-500/50 hover:shadow-md transition cursor-pointer">
+                     class="interactive-card group bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs hover:border-amber-500/50 hover:shadow-md transition cursor-pointer">
                     <div class="flex items-center justify-between">
                         <div>
                             <span class="text-xs sm:text-sm font-extrabold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Weekly Off</span>
@@ -318,7 +497,7 @@
                                 <span class="text-xs sm:text-sm font-extrabold text-amber-600 bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded-md">Scheduled</span>
                             </div>
                         </div>
-                        <div class="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 flex items-center justify-center text-xl sm:text-2xl">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 flex items-center justify-center text-xl sm:text-2xl group-hover:scale-110 transition-transform">
                             <i class="fa-solid fa-umbrella-beach"></i>
                         </div>
                     </div>
@@ -326,7 +505,7 @@
 
                 <!-- Absent Card (Only Working Days Absentees) -->
                 <div onclick="filterByStatus('Absent')" 
-                     class="group bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs hover:border-rose-500/50 hover:shadow-md transition cursor-pointer relative overflow-hidden">
+                     class="interactive-card group bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs hover:border-rose-500/50 hover:shadow-md transition cursor-pointer relative overflow-hidden">
                     <div class="flex items-center justify-between">
                         <div>
                             <span class="text-xs sm:text-sm font-extrabold text-rose-600 dark:text-rose-400 uppercase tracking-wider">
@@ -337,7 +516,7 @@
                                 <span class="text-xs sm:text-sm font-bold text-rose-500">Working Day</span>
                             </div>
                         </div>
-                        <div class="w-12 h-12 rounded-2xl bg-rose-50 dark:bg-rose-950/50 text-rose-600 flex items-center justify-center text-xl sm:text-2xl">
+                        <div class="w-12 h-12 rounded-2xl bg-rose-50 dark:bg-rose-950/50 text-rose-600 flex items-center justify-center text-xl sm:text-2xl group-hover:scale-110 transition-transform">
                             <i class="fa-solid fa-user-xmark"></i>
                         </div>
                     </div>
@@ -345,7 +524,7 @@
 
                 <!-- Night Shift Card (Interactive: Click to assign date range) -->
                 <div onclick="openNightShiftModal()" 
-                     class="group bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs hover:border-indigo-500/50 hover:shadow-md transition cursor-pointer">
+                     class="interactive-card group bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs hover:border-indigo-500/50 hover:shadow-md transition cursor-pointer">
                     <div class="flex items-center justify-between">
                         <div>
                             <span class="text-xs sm:text-sm font-extrabold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -603,6 +782,91 @@
         </div>
 
     </main>
+    </div>
+
+    <!-- ======================= CHANGE ADMIN PASSWORD MODAL ======================= -->
+    <div id="change-password-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 no-print select-none">
+        <div class="relative w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden p-6 sm:p-7 animate-fade-scale">
+            
+            <!-- Top Gradient Border -->
+            <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-500 via-rose-500 to-pink-500"></div>
+
+            <!-- Header -->
+            <div class="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800 mb-5">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center text-lg border border-amber-200 dark:border-amber-800/80">
+                        <i class="fa-solid fa-key"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base sm:text-lg font-black text-slate-900 dark:text-white">Change Admin Password</h3>
+                        <p class="text-xs text-slate-400 font-semibold">Update your portal security key</p>
+                    </div>
+                </div>
+                <button onclick="closeChangePasswordModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Error Banner -->
+            <div id="change-pwd-error-banner" class="hidden mb-4 p-3 rounded-2xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs font-bold flex items-center gap-2">
+                <i class="fa-solid fa-circle-exclamation text-sm flex-shrink-0"></i>
+                <span id="change-pwd-error-text">Current password is incorrect.</span>
+            </div>
+
+            <!-- Form -->
+            <form onsubmit="handleChangePasswordSubmit(event)" class="space-y-3.5">
+                <div>
+                    <label class="block font-black text-slate-700 dark:text-slate-300 mb-1 text-xs uppercase tracking-wider">Current Password</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-lock absolute left-3.5 top-3 text-slate-400 text-sm"></i>
+                        <input type="password" id="cp-current-pass" required placeholder="Enter current password" 
+                               class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white font-mono font-bold text-sm outline-none focus:ring-2 focus:ring-rose-500 transition">
+                        <button type="button" onclick="toggleFieldVisibility('cp-current-pass', 'cp-icon-1')" class="absolute right-3 top-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                            <i id="cp-icon-1" class="fa-solid fa-eye text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-black text-slate-700 dark:text-slate-300 mb-1 text-xs uppercase tracking-wider">New Password</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-shield-halved absolute left-3.5 top-3 text-slate-400 text-sm"></i>
+                        <input type="password" id="cp-new-pass" required placeholder="Enter new password (min 4 chars)" 
+                               class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white font-mono font-bold text-sm outline-none focus:ring-2 focus:ring-rose-500 transition">
+                        <button type="button" onclick="toggleFieldVisibility('cp-new-pass', 'cp-icon-2')" class="absolute right-3 top-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                            <i id="cp-icon-2" class="fa-solid fa-eye text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-black text-slate-700 dark:text-slate-300 mb-1 text-xs uppercase tracking-wider">Confirm New Password</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-check-double absolute left-3.5 top-3 text-slate-400 text-sm"></i>
+                        <input type="password" id="cp-confirm-pass" required placeholder="Re-enter new password" 
+                               class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white font-mono font-bold text-sm outline-none focus:ring-2 focus:ring-rose-500 transition">
+                        <button type="button" onclick="toggleFieldVisibility('cp-confirm-pass', 'cp-icon-3')" class="absolute right-3 top-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                            <i id="cp-icon-3" class="fa-solid fa-eye text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="pt-2 flex items-center justify-between gap-3">
+                    <button type="button" onclick="handleResetPasswordDefault()" title="Reset to default password (@Manik1243)" class="text-xs font-bold text-slate-500 hover:text-rose-600 dark:hover:text-rose-400 underline underline-offset-2">
+                        Reset to default
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="closeChangePasswordModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs transition">
+                            Cancel
+                        </button>
+                        <button type="submit" class="shimmer-btn px-5 py-2.5 rounded-xl bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white font-black text-xs shadow-md shadow-rose-600/20 active:scale-95 transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-floppy-disk"></i> Save Password
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- NIGHT SHIFT MANAGEMENT MODAL (SET MODERATOR & DATE RANGE) -->
     <div id="night-shift-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 no-print">
@@ -1125,12 +1389,18 @@
                 dailyBtn.className = "px-4 py-1.5 rounded-xl font-bold text-xs sm:text-sm transition bg-white dark:bg-slate-900 text-rose-600 dark:text-rose-400 shadow-xs";
                 monthlyBtn.className = "px-4 py-1.5 rounded-xl font-bold text-xs sm:text-sm transition text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white";
                 dailyContainer.classList.remove('hidden');
+                dailyContainer.classList.remove('animate-fade-scale');
+                void dailyContainer.offsetWidth; // Trigger CSS reflow
+                dailyContainer.classList.add('animate-fade-scale');
                 monthlyContainer.classList.add('hidden');
                 renderDailyTable();
             } else {
                 monthlyBtn.className = "px-4 py-1.5 rounded-xl font-bold text-xs sm:text-sm transition bg-white dark:bg-slate-900 text-rose-600 dark:text-rose-400 shadow-xs";
                 dailyBtn.className = "px-4 py-1.5 rounded-xl font-bold text-xs sm:text-sm transition text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white";
                 monthlyContainer.classList.remove('hidden');
+                monthlyContainer.classList.remove('animate-fade-scale');
+                void monthlyContainer.offsetWidth; // Trigger CSS reflow
+                monthlyContainer.classList.add('animate-fade-scale');
                 dailyContainer.classList.add('hidden');
                 renderMonthlyTable();
             }
@@ -2240,6 +2510,202 @@
             showToast('Excel report exported');
         }
 
+        // ======================= AUTHENTICATION & PRIVACY SYSTEM =======================
+        const AUTH_CONFIG = {
+            username: "admin",
+            defaultPassword: "@Manik1243",
+            storageKey: "sanvees_auth_token_v1",
+            passwordStorageKey: "sanvees_custom_password_v1",
+            getPassword() {
+                return localStorage.getItem(this.passwordStorageKey) || this.defaultPassword;
+            },
+            setPassword(newPass) {
+                localStorage.setItem(this.passwordStorageKey, newPass);
+            },
+            resetDefaultPassword() {
+                localStorage.removeItem(this.passwordStorageKey);
+            }
+        };
+
+        function isAuthenticated() {
+            return localStorage.getItem(AUTH_CONFIG.storageKey) === "AUTHENTICATED" || 
+                   sessionStorage.getItem(AUTH_CONFIG.storageKey) === "AUTHENTICATED";
+        }
+
+        function checkAuthStatus() {
+            const loginScreen = document.getElementById('login-screen');
+            const mainApp = document.getElementById('main-app-wrapper');
+            
+            if (isAuthenticated()) {
+                loginScreen.classList.add('hidden');
+                mainApp.classList.remove('hidden');
+            } else {
+                loginScreen.classList.remove('hidden');
+                mainApp.classList.add('hidden');
+                setTimeout(() => {
+                    const userInput = document.getElementById('login-username');
+                    if (userInput) userInput.focus();
+                }, 100);
+            }
+        }
+
+        function togglePasswordVisibility() {
+            const pwdInput = document.getElementById('login-password');
+            const icon = document.getElementById('password-toggle-icon');
+            if (pwdInput.type === 'password') {
+                pwdInput.type = 'text';
+                icon.className = 'fa-solid fa-eye-slash text-sm text-rose-500';
+            } else {
+                pwdInput.type = 'password';
+                icon.className = 'fa-solid fa-eye text-sm text-slate-400';
+            }
+        }
+
+        function toggleFieldVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (!input || !icon) return;
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fa-solid fa-eye-slash text-xs text-rose-500';
+            } else {
+                input.type = 'password';
+                icon.className = 'fa-solid fa-eye text-xs text-slate-400';
+            }
+        }
+
+        function handleLoginSubmit(e) {
+            e.preventDefault();
+            const userInput = document.getElementById('login-username').value.trim();
+            const passInput = document.getElementById('login-password').value;
+            const rememberMe = document.getElementById('login-remember-me').checked;
+            const errorBanner = document.getElementById('login-error-banner');
+            const errorText = document.getElementById('login-error-text');
+            const loginCard = document.getElementById('login-card');
+            const submitBtn = document.getElementById('btn-login-submit');
+
+            // Authentication verification against dynamic password
+            if (userInput.toLowerCase() === AUTH_CONFIG.username.toLowerCase() && passInput === AUTH_CONFIG.getPassword()) {
+                // Success
+                errorBanner.classList.add('hidden');
+                
+                // Set storage token
+                if (rememberMe) {
+                    localStorage.setItem(AUTH_CONFIG.storageKey, "AUTHENTICATED");
+                } else {
+                    sessionStorage.setItem(AUTH_CONFIG.storageKey, "AUTHENTICATED");
+                }
+
+                // Unlock Animation
+                submitBtn.innerHTML = `<i class="fa-solid fa-circle-check text-base animate-bounce"></i> <span>Access Granted...</span>`;
+                submitBtn.className = "w-full mt-2 py-3.5 rounded-2xl bg-emerald-600 text-white font-black text-sm tracking-wide shadow-lg shadow-emerald-600/30 transition flex items-center justify-center gap-2";
+
+                setTimeout(() => {
+                    checkAuthStatus();
+                    showToast("Welcome! Access Granted to Moderators Portal", "success");
+                    // Reset button state
+                    submitBtn.innerHTML = `<i class="fa-solid fa-right-to-bracket text-base"></i> <span>Unlock Dashboard</span>`;
+                    submitBtn.className = "shimmer-btn w-full mt-2 py-3.5 rounded-2xl bg-gradient-to-r from-rose-600 via-rose-500 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white font-black text-sm tracking-wide shadow-lg shadow-rose-600/25 active:scale-[0.98] transition flex items-center justify-center gap-2";
+                }, 400);
+
+            } else {
+                // Invalid
+                errorBanner.classList.remove('hidden');
+                if (userInput.toLowerCase() !== AUTH_CONFIG.username.toLowerCase()) {
+                    errorText.innerText = "Incorrect username. Please use authorized username.";
+                } else {
+                    errorText.innerText = "Incorrect password. Please verify and try again.";
+                }
+
+                // Shake Card Animation
+                loginCard.classList.remove('animate-shake');
+                void loginCard.offsetWidth; // Trigger reflow
+                loginCard.classList.add('animate-shake');
+
+                const pwdInput = document.getElementById('login-password');
+                pwdInput.value = '';
+                pwdInput.focus();
+            }
+        }
+
+        function handleLogout() {
+            if (confirm("Are you sure you want to log out from Sanvee's by Tony Portal?")) {
+                localStorage.removeItem(AUTH_CONFIG.storageKey);
+                sessionStorage.removeItem(AUTH_CONFIG.storageKey);
+                
+                // Clear fields
+                document.getElementById('login-password').value = '';
+                document.getElementById('login-error-banner').classList.add('hidden');
+                
+                checkAuthStatus();
+                showToast("Logged out securely.", "info");
+            }
+        }
+
+        // ======================= CHANGE PASSWORD MODAL LOGIC =======================
+        function openChangePasswordModal() {
+            document.getElementById('cp-current-pass').value = '';
+            document.getElementById('cp-new-pass').value = '';
+            document.getElementById('cp-confirm-pass').value = '';
+            document.getElementById('change-pwd-error-banner').classList.add('hidden');
+            document.getElementById('change-password-modal').classList.remove('hidden');
+            setTimeout(() => {
+                const curInput = document.getElementById('cp-current-pass');
+                if (curInput) curInput.focus();
+            }, 100);
+        }
+
+        function closeChangePasswordModal() {
+            document.getElementById('change-password-modal').classList.add('hidden');
+        }
+
+        function handleChangePasswordSubmit(e) {
+            e.preventDefault();
+            const curPass = document.getElementById('cp-current-pass').value;
+            const newPass = document.getElementById('cp-new-pass').value;
+            const confirmPass = document.getElementById('cp-confirm-pass').value;
+            const errorBanner = document.getElementById('change-pwd-error-banner');
+            const errorText = document.getElementById('change-pwd-error-text');
+
+            // 1. Verify current password
+            if (curPass !== AUTH_CONFIG.getPassword()) {
+                errorBanner.classList.remove('hidden');
+                errorText.innerText = "Current password is incorrect. Please re-enter.";
+                document.getElementById('cp-current-pass').focus();
+                return;
+            }
+
+            // 2. Validate new password length
+            if (!newPass || newPass.trim().length < 4) {
+                errorBanner.classList.remove('hidden');
+                errorText.innerText = "New password must be at least 4 characters long.";
+                document.getElementById('cp-new-pass').focus();
+                return;
+            }
+
+            // 3. Verify confirmation
+            if (newPass !== confirmPass) {
+                errorBanner.classList.remove('hidden');
+                errorText.innerText = "New password and confirmation do not match.";
+                document.getElementById('cp-confirm-pass').focus();
+                return;
+            }
+
+            // 4. Update Password
+            AUTH_CONFIG.setPassword(newPass);
+            errorBanner.classList.add('hidden');
+            closeChangePasswordModal();
+            showToast("Password changed successfully!", "success");
+        }
+
+        function handleResetPasswordDefault() {
+            if (confirm("Reset admin password to default (@Manik1243)?")) {
+                AUTH_CONFIG.resetDefaultPassword();
+                closeChangePasswordModal();
+                showToast("Password reset to default (@Manik1243)", "info");
+            }
+        }
+
         // Keyboard and Global Listeners
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
@@ -2249,6 +2715,7 @@
                 closeLeaveModal();
                 closeAbsentAlertModal();
                 closeBulkUnexcusedModal();
+                closeChangePasswordModal();
             }
         });
 
@@ -2259,6 +2726,7 @@
             updateDateUI();
             document.getElementById('selected-month-picker').value = currentActiveMonth;
             renderDailyTable();
+            checkAuthStatus();
         });
     </script>
 </body>
