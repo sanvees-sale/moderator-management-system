@@ -1322,6 +1322,14 @@
             if (savedMods) {
                 try {
                     moderators = JSON.parse(savedMods);
+                    // Ensure Mosharof Hossain (SL 09) and all default roster members are intact
+                    DEFAULT_MODERATORS.forEach(defMod => {
+                        const exists = moderators.some(m => m.sl === defMod.sl || m.name.toLowerCase() === defMod.name.toLowerCase());
+                        if (!exists) {
+                            moderators.push(JSON.parse(JSON.stringify(defMod)));
+                        }
+                    });
+                    moderators.sort((a, b) => (a.sl || 0) - (b.sl || 0));
                 } catch(e) {
                     moderators = JSON.parse(JSON.stringify(DEFAULT_MODERATORS));
                 }
